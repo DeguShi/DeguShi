@@ -12,11 +12,10 @@
   <img align="center" alt="Linux" src="https://img.shields.io/badge/Linux-000000?style=for-the-badge&logo=linux" />
 </div>
 <br>
-<div style="display: inline_block; text-align: center; width: 100%;" align="center">
-  <a href="https://github.com/DeguShi" style="display:block">
-    <img height="175em" src="https://github-readme-stats.vercel.app/api?username=DeguShi&show_icons=true&theme=dark&include_all_commits=true&count_private=true&hide_border=true&title_color=4169E1&icon_color=4169E1&bg_color=151515&text_color=FFF"/>
-    <img height="175em" src="https://github-readme-streak-stats.herokuapp.com?user=DeguShi&theme=dark&hide_border=true&ring=4169E1&fire=yellow&currStreakLabel=white&background=151515"/>
-  </a>
+
+<div align="center">
+  <img height="175em" src="https://github-readme-stats.vercel.app/api?username=DeguShi&show_icons=true&theme=dark&include_all_commits=true&count_private=true&hide_border=true&title_color=4169E1&icon_color=4169E1&bg_color=151515&text_color=FFF"/>
+  <img height="175em" src="https://github-readme-streak-stats.herokuapp.com?user=DeguShi&theme=dark&hide_border=true&ring=4169E1&fire=yellow&currStreakLabel=white&background=151515"/>
 </div>
 
 ##
