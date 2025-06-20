@@ -5,7 +5,6 @@
   <img align="center" src="https://img.shields.io/badge/C-151515?style=for-the-badge&logo=c&logoColor=green" />
   <img align="center" alt="C++" src="https://techstack-generator.vercel.app/cpp-icon.svg" alt="icon" width="30" height="30" />
   <img align="center" alt="Python" src="https://techstack-generator.vercel.app/python-icon.svg" alt="icon" width="30" height="30" />
-  <img align="center" alt="NodeJS" src="https://techstack-generator.vercel.app/js-icon.svg" alt="icon"width="30" height="30" />
   <img align="center" alt="React" src="https://techstack-generator.vercel.app/react-icon.svg" alt="icon" width="30" height="30" />
   <img align="center" alt="CSS" src="https://img.shields.io/badge/CSS-151515?style=for-the-badge&logo=css3&logoColor=white" />
   <img align="center" alt="macOS" src="https://img.shields.io/badge/macOS-000000?style=for-the-badge&logo=apple" />
