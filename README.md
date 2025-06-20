@@ -8,11 +8,10 @@
   <img align="center" alt="NodeJS" src="https://img.shields.io/badge/Node.js-151515?style=for-the-badge&logo=nodedotjs&logoColor=yellow" />
   <img align="center" alt="React" src="https://img.shields.io/badge/React-151515?style=for-the-badge&logo=react&logoColor=blue" />
   <img align="center" alt="CSS" src="https://img.shields.io/badge/CSS-151515?style=for-the-badge&logo=css3&logoColor=white" />
+  <img align="center" alt="macOS" src="https://img.shields.io/badge/macOS-000000?style=for-the-badge&logo=apple" />
+  <img align="center" alt="Linux" src="https://img.shields.io/badge/Linux-000000?style=for-the-badge&logo=linux" />
 </div>
 <br>
-
-##
-
 <div style="display: inline_block; text-align: center; width: 100%;" align="center">
   <a href="https://github.com/DeguShi" style="display:block">
     <img height="175em" src="https://github-readme-stats.vercel.app/api?username=DeguShi&show_icons=true&theme=dark&include_all_commits=true&count_private=true&hide_border=true&title_color=4169E1&icon_color=4169E1&bg_color=151515&text_color=FFF"/>
