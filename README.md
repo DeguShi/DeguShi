@@ -12,13 +12,9 @@
 </div>
 <br>
 
-<table style="border: none; border-collapse: collapse; margin: 0 auto;" cellspacing="0" cellpadding="0">
-  <tr>
-    <td>
-      <img height="175em" src="https://github-readme-stats.vercel.app/api?username=DeguShi&show_icons=true&theme=dark&include_all_commits=true&count_private=true&hide_border=true&title_color=4169E1&icon_color=4169E1&bg_color=151515&text_color=FFF"/>
-    </td>
-    <td>
-      <img height="175em" src="https://github-readme-streak-stats.herokuapp.com?user=DeguShi&theme=dark&hide_border=true&ring=4169E1&fire=yellow&currStreakLabel=white&background=151515"/>
-    </td>
-  </tr>
-</table>
+<p align="center">
+<a href="https://github.com/AVS1508">
+  <img height="180em" src="https://github-readme-stats-eight-theta.vercel.app/api?username=DeguShi&show_icons=true&theme=algolia&include_all_commits=true&count_private=true"/>
+  <img height="180em" src="https://github-readme-stats-eight-theta.vercel.app/api/top-langs/?username=DeguShi&layout=compact&langs_count=8&theme=algolia"/>
+</a>
+</p>
