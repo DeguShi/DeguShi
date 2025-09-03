@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://github.com/DenverCoder1/readme-typing-svg"><img src="https://readme-typing-svg.herokuapp.com/?lines=Hi%2C+I'm+Felipe+Azambuja;I'm+a+Computer+Science+Undergraduate+at+the+University+of+S%C3%A3o+Paulo;My+current+research+focuses+on+epidemiological+predictions+using+AI+techniques;This+profile+showcases+some+of+my+academic+and+personal+projects;Feel+free+to+contact+me+at+felipe.azamba%40usp.br&font=Fira%20Code&center=true&width=1000&height=45&color=4169E1&pause=2000"></a>
+  <a href="https://github.com/DeguShi"><img src="https://readme-typing-svg.herokuapp.com/?lines=Hi%2C+I'm+Felipe+Azambuja;I'm+a+Computer+Science+Undergraduate+at+the+University+of+S%C3%A3o+Paulo;My+current+research+focuses+on+epidemiological+predictions+using+AI+techniques;This+profile+showcases+some+of+my+academic+and+personal+projects;Feel+free+to+contact+me+at+felipe.azamba%40usp.br&font=Fira%20Code&center=true&width=1000&height=45&color=4169E1&pause=2000"></a>
 </p>
 
 ## 
