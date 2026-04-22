@@ -7,15 +7,15 @@
 <br>
 
 
-<div style="display: inline_block; text-align: center;" align="center">
-  <img align="center" src="https://img.shields.io/badge/C-151515?style=for-the-badge&logo=c&logoColor=green" />
-  <img align="center" alt="C++" src="https://techstack-generator.vercel.app/cpp-icon.svg" alt="icon" width="30" height="30" />
-  <img align="center" alt="Python" src="https://techstack-generator.vercel.app/python-icon.svg" alt="icon" width="30" height="30" />
-  <img align="center" alt="React" src="https://techstack-generator.vercel.app/react-icon.svg" alt="icon" width="30" height="30" />
-  <img align="center" alt="CSS" src="https://img.shields.io/badge/CSS-151515?style=for-the-badge&logo=css3&logoColor=white" />
-  <img align="center" alt="macOS" src="https://img.shields.io/badge/macOS-000000?style=for-the-badge&logo=apple" />
-  <img align="center" alt="Linux" src="https://img.shields.io/badge/Linux-000000?style=for-the-badge&logo=linux" />
-</div>
+<p align="center">
+  <img src="https://img.shields.io/badge/C-151515?style=for-the-badge&logo=c&logoColor=A8B400" alt="C" />
+  <img src="https://img.shields.io/badge/C%2B%2B-151515?style=for-the-badge&logo=c%2B%2B&logoColor=659AD2" alt="C++" />
+  <img src="https://img.shields.io/badge/Python-151515?style=for-the-badge&logo=python&logoColor=FFD43B" alt="Python" />
+  <img src="https://img.shields.io/badge/React-151515?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
+  <img src="https://img.shields.io/badge/CSS3-151515?style=for-the-badge&logo=css3&logoColor=1572B6" alt="CSS3" />
+  <img src="https://img.shields.io/badge/macOS-151515?style=for-the-badge&logo=apple&logoColor=white" alt="macOS" />
+  <img src="https://img.shields.io/badge/Linux-151515?style=for-the-badge&logo=linux&logoColor=FCC624" alt="Linux" />
+</p>
 <br>
 <br>
 <br>
