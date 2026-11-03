@@ -45,10 +45,21 @@ def build_lines(script: list[Command | Output], t0: float) -> tuple[list[Line], 
 
 
 def discrete(values: list[tuple[float, float]], period: float) -> str:
-    """SMIL attributes for a stepwise value track that resets to its first value each loop."""
-    pts = [(0.0, values[0][1])] + [(t / period, v) for t, v in values] + [((period - 0.35) / period, values[0][1])]
-    kt = ";".join(f"{t:.4f}" for t, _ in pts)
-    vs = ";".join(f"{v:g}" for _, v in pts)
+    """SMIL attributes for a stepwise track that resets to its first value each loop.
+
+    keyTimes are strictly increasing from 0 to 1: Safari mishandles duplicate key times or a
+    discrete track that ends before 1, and then fails to reset the loop.
+    """
+    start = values[0][1]
+    pts = [(0.0, start)] + [(t / period, v) for t, v in values] + [((period - 0.35) / period, start), (1.0, start)]
+    clean: list[tuple[float, float]] = []
+    for kt, v in sorted(pts, key=lambda p: p[0]):
+        if clean and kt - clean[-1][0] < 1e-4:
+            clean[-1] = (clean[-1][0], v)   # same instant: the later value wins
+        else:
+            clean.append((kt, v))
+    kt = ";".join(f"{k:.4f}" for k, _ in clean)
+    vs = ";".join(f"{v:g}" for _, v in clean)
     return f'dur="{period:.2f}s" repeatCount="indefinite" calcMode="discrete" keyTimes="{kt}" values="{vs}"'
 
 

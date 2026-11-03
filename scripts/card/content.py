@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from card.theme import AMBER, CORAL, DIM, MINT, SOFT, TEXT
+from card.theme import AMBER, CORAL, DIM, FAINT, MINT, SOFT, TEXT
 
 Span = tuple[str, str]  # (text, colour)
 
@@ -33,6 +33,8 @@ TERMINAL: list[Command | Output] = [
     Output([("orquidea/  angelin-htr/  ai-notebooks/  computer-graphics/  …", DIM)]),
     Command("cat building/.stealth/README"),
     Output([("pehnaporta", AMBER), ("  ·  not yet. soon.", SOFT)]),
+    Command("open degushi.github.io"),
+    Output([("↳ ", FAINT), ("click to see more", MINT)]),
 ]
 
 RESEARCH_TOPICS = ["World Models", "Object-Centric Learning", "LLM Agents", "Graph Neural Networks", "Epidemic Modeling"]
