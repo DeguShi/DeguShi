@@ -1,0 +1,33 @@
+name: profile card
+
+on:
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["scripts/**"]
+
+permissions:
+  contents: write
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Render SVG
+        env:
+          # PROFILE_TOKEN (optional, read-only PAT) lets the card see private repos; falls back to public data.
+          GH_CARD_TOKEN: ${{ secrets.PROFILE_TOKEN || secrets.GITHUB_TOKEN }}
+        run: python scripts/build.py --login "${{ github.repository_owner }}" --out assets/profile.svg --token-env GH_CARD_TOKEN
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898333+github-actions[bot]@users.noreply.github.com"
+          git add assets/profile.svg
+          git diff --cached --quiet || { git commit -m "Refresh profile card"; git push; }
