@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 60" width="960" height="60" role="img" aria-label="footer">
+  <defs>
+    <linearGradient id="line" x1="0" x2="1">
+      <stop offset="0" stop-color="#2DD4BF" stop-opacity="0"/>
+      <stop offset=".15" stop-color="#2DD4BF"/>
+      <stop offset=".85" stop-color="#FF7A59"/>
+      <stop offset="1" stop-color="#FF7A59" stop-opacity="0"/>
+    </linearGradient>
+    <style>
+      .ln { stroke: url(#line); stroke-width: 1.2; stroke-dasharray: 3 6; animation: flow 1.8s linear infinite; }
+      @keyframes flow { to { stroke-dashoffset: -18; } }
+    </style>
+  </defs>
+  <path id="track" class="ln" d="M40 30 H920" fill="none"/>
+  <circle r="3" fill="#e8fffb"><animateMotion dur="6s" repeatCount="indefinite" keyPoints="0;1;0" keyTimes="0;.5;1" calcMode="spline" keySplines=".45 0 .55 1;.45 0 .55 1"><mpath href="#track"/></animateMotion></circle>
+  <circle cx="40" cy="30" r="4" fill="#2DD4BF"/>
+  <circle cx="920" cy="30" r="4" fill="#FF7A59"/>
+</svg>
