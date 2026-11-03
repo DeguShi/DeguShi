@@ -63,16 +63,32 @@ def discrete(values: list[tuple[float, float]], period: float) -> str:
     return f'dur="{period:.2f}s" repeatCount="indefinite" calcMode="discrete" keyTimes="{kt}" values="{vs}"'
 
 
-def render_line(i: int, line: Line, x: int, y: int, period: float) -> str:
-    """One clipped text row whose clip widens as characters are revealed."""
-    track = [(0.0, 0.0)] + [(t, n * CHAR_W) for t, n in line.reveal]
+def render_line(i: int, line: Line, x: int, y: int, period: float) -> tuple[str, str]:
+    """One text row. Typed rows widen a SMIL clip per character; rows that appear at once
+    (outputs, the idle prompt) toggle opacity with CSS instead, because Safari does not reset
+    single-step SMIL tracks when the loop repeats. Returns (svg, css)."""
     total = sum(len(s) for s, _ in line.spans)
     spans = "".join(f'<tspan fill="{c}">{esc(s)}</tspan>' for s, c in line.spans)
-    return (
+    text = (f'<text x="{x}" y="{y}" class="tt{{cls}}"{{clip}} textLength="{total * CHAR_W:g}" '
+            f'lengthAdjust="spacing" xml:space="preserve">{spans}</text>')
+    if len(line.reveal) == 1:
+        return text.format(cls=f" tl{i}", clip=""), appear_css(f"tl{i}", line.reveal[0][0], period)
+    track = [(0.0, 0.0)] + [(t, n * CHAR_W) for t, n in line.reveal]
+    clip = (
         f'<clipPath id="tl{i}"><rect x="{x}" y="{y - 16}" width="0" height="{LINE_H}">'
         f'<animate attributeName="width" {discrete(track, period)}/></rect></clipPath>'
-        f'<text x="{x}" y="{y}" class="tt" clip-path="url(#tl{i})" textLength="{total * CHAR_W:g}" '
-        f'lengthAdjust="spacing" xml:space="preserve">{spans}</text>'
+    )
+    return clip + text.format(cls="", clip=f' clip-path="url(#tl{i})"'), ""
+
+
+def appear_css(cls: str, at: float, period: float) -> str:
+    """Looping CSS keyframes: hidden, visible from `at` until the loop reset, hidden again."""
+    on = 100 * at / period
+    off = 100 * (period - 0.35) / period
+    return (
+        f"@keyframes {cls} {{ 0%, {on - 0.01:.3f}% {{ opacity: 0; }} {on:.3f}%, {off - 0.01:.3f}% {{ opacity: 1; }} "
+        f"{off:.3f}%, 100% {{ opacity: 0; }} }}"
+        f".{cls} {{ opacity: 0; animation: {cls} {period:.2f}s linear infinite; }}"
     )
 
 
@@ -87,12 +103,13 @@ def render_caret(caret: list[tuple[float, int, int]], x: int, y0: int, period: f
     )
 
 
-def render_terminal(script: list[Command | Output], y: int, t0: float) -> tuple[str, int]:
-    """Terminal panel at vertical offset y. Returns (svg, height)."""
+def render_terminal(script: list[Command | Output], y: int, t0: float) -> tuple[str, int, str]:
+    """Terminal panel at vertical offset y. Returns (svg, height, css)."""
     lines, caret, period = build_lines(script, t0)
     height = 58 + len(lines) * LINE_H
     tx, ty = 64, y + 62
-    rows = "".join(render_line(i, ln, tx, ty + i * LINE_H, period) for i, ln in enumerate(lines))
+    rendered = [render_line(i, ln, tx, ty + i * LINE_H, period) for i, ln in enumerate(lines)]
+    rows, css = "".join(r for r, _ in rendered), "".join(c for _, c in rendered)
     bar = (
         f'<rect x="40" y="{y}" width="{WIDTH - 80}" height="{height}" rx="12" fill="{INK}" stroke="{LINE}"/>'
         f'<path d="M40 {y + 30} H{WIDTH - 40}" stroke="{LINE}"/>'
@@ -101,4 +118,4 @@ def render_terminal(script: list[Command | Output], y: int, t0: float) -> tuple[
         + f'<text x="{WIDTH / 2}" y="{y + 19}" class="mono-s" fill="{DIM}" text-anchor="middle">felipe — zsh</text>'
     )
     svg = f'<g class="rise" style="animation-delay:.35s">{bar}{rows}{render_caret(caret, tx, ty, period)}</g>'
-    return svg, height
+    return svg, height, css

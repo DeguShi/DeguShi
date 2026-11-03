@@ -23,7 +23,7 @@ SECTION_GAP = 56
 def sections(stats: Stats) -> list[tuple[str, str, Callable[[int], tuple[str, int, str]]]]:
     """(index, title, renderer) per section; each renderer returns (svg, height, css)."""
     return [
-        ("01", "shell", lambda top: (*render_terminal(TERMINAL, top, t0=1.4), "")),
+        ("01", "shell", lambda top: render_terminal(TERMINAL, top, t0=1.4)),
         ("02", "research ⟷ building", lambda top: render_graph(RESEARCH_TOPICS, BUILDING_TOPICS, top)),
         ("03", "activity", lambda top: (*render_stats(stats, top), "")),
     ]
