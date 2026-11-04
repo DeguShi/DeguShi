@@ -44,63 +44,59 @@ def build_lines(script: list[Command | Output], t0: float) -> tuple[list[Line], 
     return lines, caret, t + HOLD_S
 
 
-def discrete(values: list[tuple[float, float]], period: float) -> str:
-    """SMIL attributes for a stepwise track that resets to its first value each loop.
+RESET_S = 0.35  # the screen clears this long before the loop restarts
 
-    keyTimes are strictly increasing from 0 to 1: Safari mishandles duplicate key times or a
-    discrete track that ends before 1, and then fails to reset the loop.
-    """
-    start = values[0][1]
-    pts = [(0.0, start)] + [(t / period, v) for t, v in values] + [((period - 0.35) / period, start), (1.0, start)]
-    clean: list[tuple[float, float]] = []
-    for kt, v in sorted(pts, key=lambda p: p[0]):
-        if clean and kt - clean[-1][0] < 1e-4:
+
+def step_keyframes(name: str, track: list[tuple[float, str]], period: float, rest: str) -> str:
+    """Stepwise CSS keyframes: `rest` at 0%, each (time, value) from its time on, `rest` again at
+    the reset. Everything in the terminal runs on this one CSS clock: Safari neither resets SMIL
+    tracks on repeat nor keeps them in sync with CSS animations."""
+    pts = [(0.0, rest)] + [(100 * t / period, v) for t, v in track] + [(100 * (period - RESET_S) / period, rest)]
+    clean: list[tuple[float, str]] = []
+    for pct, v in sorted(pts, key=lambda p: p[0]):
+        if clean and pct - clean[-1][0] < 0.005:
             clean[-1] = (clean[-1][0], v)   # same instant: the later value wins
         else:
-            clean.append((kt, v))
-    kt = ";".join(f"{k:.4f}" for k, _ in clean)
-    vs = ";".join(f"{v:g}" for _, v in clean)
-    return f'dur="{period:.2f}s" repeatCount="indefinite" calcMode="discrete" keyTimes="{kt}" values="{vs}"'
+            clean.append((pct, v))
+    # Hold each value explicitly until just before the next stop and run the animation linear:
+    # engines disagree on how step-end applies inside keyframes (WebKit shows values a step early).
+    stops = []
+    for k, (pct, v) in enumerate(clean):
+        nxt = clean[k + 1][0] if k + 1 < len(clean) else 100.0
+        stops.append(f"{pct:.3f}%, {max(pct, nxt - 0.002):.3f}% {{ {v} }}")
+    return f"@keyframes {name} {{ {' '.join(stops)} 100% {{ {rest} }} }}"
+
+
+def animated(cls: str, period: float) -> str:
+    return f".{cls} {{ animation: {cls} {period:.2f}s linear infinite; }}"
 
 
 def render_line(i: int, line: Line, x: int, y: int, period: float) -> tuple[str, str]:
-    """One text row. Typed rows widen a SMIL clip per character; rows that appear at once
-    (outputs, the idle prompt) toggle opacity with CSS instead, because Safari does not reset
-    single-step SMIL tracks when the loop repeats. Returns (svg, css)."""
+    """One text row under a cover the colour of the terminal, which slides right one character at a
+    time to reveal it and slides back at the reset. Only transforms are animated: WebKit does not
+    clip at all when an animated clip rect is zero-wide. Returns (svg, css)."""
     total = sum(len(s) for s, _ in line.spans)
     spans = "".join(f'<tspan fill="{c}">{esc(s)}</tspan>' for s, c in line.spans)
-    text = (f'<text x="{x}" y="{y}" class="tt{{cls}}"{{clip}} textLength="{total * CHAR_W:g}" '
-            f'lengthAdjust="spacing" xml:space="preserve">{spans}</text>')
-    if len(line.reveal) == 1:
-        return text.format(cls=f" tl{i}", clip=""), appear_css(f"tl{i}", line.reveal[0][0], period)
-    track = [(0.0, 0.0)] + [(t, n * CHAR_W) for t, n in line.reveal]
-    clip = (
-        f'<clipPath id="tl{i}"><rect x="{x}" y="{y - 16}" width="0" height="{LINE_H}">'
-        f'<animate attributeName="width" {discrete(track, period)}/></rect></clipPath>'
+    # One x per character pins every glyph to the CHAR_W grid, so sliding the cover by
+    # n * CHAR_W uncovers exactly n characters.
+    xs = " ".join(f"{x + k * CHAR_W:g}" for k in range(total))
+    track = [(t, f"transform: translateX({n * CHAR_W:g}px);") for t, n in line.reveal]
+    svg = (
+        f'<text x="{xs}" y="{y}" class="tt" xml:space="preserve">{spans}</text>'
+        f'<rect class="tl{i}" x="{x - 1}" y="{y - 17}" width="{total * CHAR_W + 6:g}" height="{LINE_H}" fill="{INK}"/>'
     )
-    return clip + text.format(cls="", clip=f' clip-path="url(#tl{i})"'), ""
+    return svg, step_keyframes(f"tl{i}", track, period, "transform: translateX(0px);") + animated(f"tl{i}", period)
 
 
-def appear_css(cls: str, at: float, period: float) -> str:
-    """Looping CSS keyframes: hidden, visible from `at` until the loop reset, hidden again."""
-    on = 100 * at / period
-    off = 100 * (period - 0.35) / period
-    return (
-        f"@keyframes {cls} {{ 0%, {on - 0.01:.3f}% {{ opacity: 0; }} {on:.3f}%, {off - 0.01:.3f}% {{ opacity: 1; }} "
-        f"{off:.3f}%, 100% {{ opacity: 0; }} }}"
-        f".{cls} {{ opacity: 0; animation: {cls} {period:.2f}s linear infinite; }}"
+def render_caret(caret: list[tuple[float, int, int]], x: int, y0: int, period: float) -> tuple[str, str]:
+    """Block caret that follows the typing and blinks. Returns (svg, css)."""
+    _, row0, col0 = caret[0]
+    move = [(t, f"transform: translate({(col - col0) * CHAR_W:g}px, {(row - row0) * LINE_H}px);") for t, row, col in caret]
+    svg = (
+        f'<g class="cm"><rect class="caret" x="{x + col0 * CHAR_W:g}" y="{y0 - 14 + row0 * LINE_H}" '
+        f'width="{CHAR_W:g}" height="18" fill="{MINT}" opacity=".85"/></g>'
     )
-
-
-def render_caret(caret: list[tuple[float, int, int]], x: int, y0: int, period: float) -> str:
-    """Block caret that follows the typing and blinks while idle."""
-    xs = [(t, x + col * CHAR_W) for t, _, col in caret]
-    ys = [(t, y0 - 14 + row * LINE_H) for t, row, _ in caret]
-    return (
-        f'<rect class="caret" x="{xs[0][1]:g}" y="{ys[0][1]}" width="{CHAR_W:g}" height="18" fill="{MINT}" opacity=".85">'
-        f'<animate attributeName="x" {discrete([(0, xs[0][1])] + xs, period)}/>'
-        f'<animate attributeName="y" {discrete([(0, ys[0][1])] + ys, period)}/></rect>'
-    )
+    return svg, step_keyframes("cm", move, period, "transform: translate(0px, 0px);") + animated("cm", period)
 
 
 def render_terminal(script: list[Command | Output], y: int, t0: float) -> tuple[str, int, str]:
@@ -117,5 +113,9 @@ def render_terminal(script: list[Command | Output], y: int, t0: float) -> tuple[
                   for k, c in enumerate(("#ff5f57", "#febc2e", "#28c840")))
         + f'<text x="{WIDTH / 2}" y="{y + 19}" class="mono-s" fill="{DIM}" text-anchor="middle">felipe — zsh</text>'
     )
-    svg = f'<g class="rise" style="animation-delay:.35s">{bar}{rows}{render_caret(caret, tx, ty, period)}</g>'
-    return svg, height, css
+    caret_svg, caret_css = render_caret(caret, tx, ty, period)
+    # Covers slide right past the end of their line; keep them inside the window (static clip).
+    inner = (f'<clipPath id="termclip"><rect x="41" y="{y + 31}" width="{WIDTH - 82}" height="{height - 32}" rx="11"/></clipPath>')
+    svg = (f'<g class="rise" style="animation-delay:.35s">{bar}{inner}'
+           f'<g clip-path="url(#termclip)">{rows}{caret_svg}</g></g>')
+    return svg, height, css + caret_css
